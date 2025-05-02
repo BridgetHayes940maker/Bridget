@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Record System - Patient Records</title>
+
+    <!-- Embedded CSS with Transparent Background -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo h2 {
+            text-align: center;
+            margin: 0;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-links li {
+            margin: 20px 0;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+        }
+
+        .nav-links .active a {
+            font-weight: bold;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background-image: url('images/transparent-image.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .primary-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .primary-btn:hover {
+            background-color: #45a049;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-bar button {
+            background-color: #007BFF;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 400px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .cancel-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        figure img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <h2>Health Records</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li class="active"><a href="patient-records.html">Patient Records</a></li>
+                <li><a href="add-patient.html">Add Patient</a></li>
+                <li><a href="appointments.html">Appointments</a></li>
+                <li><a href="prescriptions.html">Prescriptions</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <header>
+                <h1>Patient Records</h1>
+                <button class="primary-btn" onclick="utils.showModal('addPatientModal')">Add New Patient</button>
+            </header>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Search patients by name or ID...">
+                <button onclick="searchPatients()">Search</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Contact</th>
+                        <th>Last Visit</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Patient records will be added dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Patient Modal -->
+    <figure><img src="image3.jpg" alt="#"/></figure>
+    <div id="addPatientModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Patient</h2>
+            <form class="patient-form" onsubmit="addPatient(event)">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                    <figure><img src="image2.jpg" alt="#"/></figure>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="primary-btn">Add Patient</button>
+                    <button type="button" class="cancel-btn" onclick="utils.hideModal('addPatientModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Patient Modal -->
+    <div id="viewPatientModal" class="modal">
+        <div class="modal-content">
+            <h2>Patient Details</h2>
+            <div class="patient-details">
+                <p><strong>Name:</strong> <span class="patient-name"></span></p>
+                <p><strong>ID:</strong> <span class="patient-id"></span></p>
+                <p><strong>Age:</strong> <span class="patient-age"></span></p>
+                <p><strong>Gender:</strong> <span class="patient-gender"></span></p>
+                <p><strong>Contact:</strong> <span class="patient-contact"></span></p>
+                <p><strong>Last Visit:</strong> <span class="patient-last-visit"></span></p>
+            </div>
+            <div class="form-actions">
+                <button class="cancel-btn" onclick="utils.hideModal('viewPatientModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Patient Modal -->
+    <div id="editPatientModal" class="modal">
+        <div class="modal-content">
+            <h2>Edit Patient</h2>
+            <form class="patient-form" onsubmit="updatePatient(event)">
+                <input type="hidden" id="editPatientId" name="patientId">
+                <div class="form-group">
+                    <label for="editFullName">Full Name</label>
+                    <input type="text" id="editFullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editGender">Gender</label>
+                    <select id="editGender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Phone Number</label>
+                    <input type="tel" id="editPhone" name="phone" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="primary-btn">Update Patient</button>
+                    <button type="button" class="cancel-btn" onclick="utils.hideModal('editPatientModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function searchPatients() {
+            const searchInput = document.querySelector('.search-bar input');
+            const searchTerm = searchInput.value.toLowerCase();
+            const patients = storage.getPatients();
+            const filteredPatients = patients.filter(patient => 
+                patient.name.toLowerCase().includes(searchTerm) ||
+                patient.id.toLowerCase().includes(searchTerm)
+            );
+            updatePatientTable(filteredPatients);
+        }
+
+        function addPatient(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            if (!utils.validateForm(formData)) {
+                utils.showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            const patients = storage.getPatients();
+            const newPatient = {
+                id: `P${String(patients.length + 1).padStart(3, '0')}`,
+                name: formData.get('fullName'),
+                age: calculateAge(formData.get('dob')),
+                gender: formData.get('gender'),
+                contact: formData.get('phone'),
+                lastVisit: utils.formatDate(new Date())
+            };
+            
+            patients.push(newPatient);
+            storage.savePatients(patients);
+            utils.showNotification('Patient added successfully');
+            form.reset();
+            utils.hideModal('addPatientModal');
+            updatePatientTable(patients);
+        }
+
+        function updatePatient(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const patientId = formData.get('patientId');
+            
+            if (!utils.validateForm(formData)) {
+                utils.showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            const patients = storage.getPatients();
+            const updatedPatients = patients.map(patient => {
+                if (patient.id === patientId) {
+                    return {
+                        ...patient,
+                        name: formData.get('fullName'),
+                        gender: formData.get('gender'),
+                        contact: formData.get('phone')
+                    };
+                }
+                return patient;
+            });
+            
+            storage.savePatients(updatedPatients);
+            utils.showNotification('Patient updated successfully');
+            form.reset();
+            utils.hideModal('editPatientModal');
+            updatePatientTable(updatedPatients);
+        }
+
+        function deletePatient(patientId) {
+            if (confirm('Are you sure you want to delete this patient?')) {
+                const patients = storage.getPatients();
+                const updatedPatients = patients.filter(p => p.id !== patientId);
+                storage.savePatients(updatedPatients);
+                updatePatientTable(updatedPatients);
+                utils.showNotification('Patient deleted successfully');
+            }
+        }
+
+        function calculateAge(dob) {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePatientTable(storage.getPatients());
+        });
+    </script>
+</body>
+</html>
