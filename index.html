@@ -378,6 +378,46 @@
         </form>
     </div>
 </div>
+<script>
+   
+    const marqueeContainer = document.createElement('div');
+    marqueeContainer.style.width = '100%';
+    marqueeContainer.style.backgroundColor = '#34495e';
+    marqueeContainer.style.color = '#f1c40f';
+    marqueeContainer.style.fontSize = '18px';
+    marqueeContainer.style.padding = '10px 0';
+    marqueeContainer.style.overflow = 'hidden';
+    marqueeContainer.style.whiteSpace = 'nowrap';
+    marqueeContainer.style.position = 'absolute';
+    marqueeContainer.style.top = '0';
+    marqueeContainer.style.left = '0';
+    marqueeContainer.style.zIndex = '1000';
 
+   
+    const marqueeText = document.createElement('div');
+    marqueeText.textContent = "Welcome to the Health Record System! Stay updated with the latest health information.";
+    marqueeText.style.display = 'inline-block';
+    marqueeText.style.animation = 'marquee 10s linear infinite';
+
+    
+    marqueeContainer.appendChild(marqueeText);
+
+    
+    document.body.appendChild(marqueeContainer);
+
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes marquee {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(-100%);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
 </body>
 </html>
